@@ -1,5 +1,4 @@
-FROM docker:17.06.2-dind
-
+FROM docker:1.12.6-dind
 
 ENV CLAIR_SCANNER_VERSION=v8
 
