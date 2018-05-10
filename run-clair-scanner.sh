@@ -32,10 +32,10 @@ else
    service=$(curl -s  http://rancher-metadata/latest/containers/$container/labels/io.rancher.stack_service.name)
    TMPDIR=`pwd` clair-scanner --ip=`hostname` --clair=$CLAIR_URL -t=$LEVEL --all=false  $image >/tmp/scan_result 2>&1
    if [ $? -eq 0 ]; then
-     echo "{\"environment_name\": \"$environment_name\", \"environment_uuid\": \"$environment_uuid\", \"hostname\": \"$host\", \"stack\": \"$stack\", \"service\": \"$service\", \"container\": \"$container\", \"image\": \"$image\", \"status\": \"OK\", \"result\": \"$(cat /tmp/scan_result | tail -n 2 | tr '\n' ';' | sed 's/;/\\n/g' | tr -d '[:cntrl:]' )\"}"
+     echo "{\"environment_name\": \"$environment_name\", \"environment_uuid\": \"$environment_uuid\", \"hostname\": \"$host\", \"stack\": \"$stack\", \"service\": \"$service\", \"container\": \"$container\", \"image\": \"$image\", \"clair-scan-status\": \"OK\", \"result\": \"$(cat /tmp/scan_result | tail -n 2 | tr '\n' ';' | sed 's/;/\\n/g' | tr -d '[:cntrl:]' )\"}"
 
    else
-    echo "{\"environment_name\": \"$environment_name\", \"environment_uuid\": \"$environment_uuid\", \"hostname\": \"$host\", \"stack\": \"$stack\", \"service\": \"$service\", \"container\": \"$container\", \"image\": \"$image\", \"status\": \"ERROR\", \"result\": \"$(cat /tmp/scan_result | tr '\n' ';' | sed 's/;/\\n/g' |  tr -d '[:cntrl:]' )\"}"
+    echo "{\"environment_name\": \"$environment_name\", \"environment_uuid\": \"$environment_uuid\", \"hostname\": \"$host\", \"stack\": \"$stack\", \"service\": \"$service\", \"container\": \"$container\", \"image\": \"$image\", \"clair-scan-status\": \"ERROR\", \"result\": \"$(cat /tmp/scan_result | tr '\n' ';' | sed 's/;/\\n/g' |  tr -d '[:cntrl:]' )\"}"
 
    fi
    # reset image for next loop
