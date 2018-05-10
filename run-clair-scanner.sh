@@ -7,6 +7,9 @@ image="0"
 host=$(curl -s  http://rancher-metadata/latest/self/host/hostname)
 environment_uuid=$(curl -s  http://rancher-metadata/latest/self/host/environment_uuid)
 
+#clean-up
+rm -rf clair-scanner-*
+
 for cont in $(docker ps --format '{{.Image}} {{.Names}}')
 do
 if [[ "$image" == "0" ]]; then
@@ -27,12 +30,12 @@ else
    fi
 
    service=$(curl -s  http://rancher-metadata/latest/containers/$container/labels/io.rancher.stack_service.name)
-   result=$(TMPDIR=`pwd` clair-scanner --ip=`hostname` --clair=$CLAIR_URL -t=$LEVEL --all=false  $image 2>&1)
+   TMPDIR=`pwd` clair-scanner --ip=`hostname` --clair=$CLAIR_URL -t=$LEVEL --all=false  $image >/tmp/scan_result 2>&1
    if [ $? -eq 0 ]; then
-     echo "{\"environment_name\": \"$environment_name\", \"environment_uuid\": \"$environment_uuid\", \"hostname\": \"$host\", \"stack\": \"$stack\", \"service\": \"$service\", \"container\": \"$container\", \"image\": \"$image\", \"status\": \"OK\", \"result\": \"$(echo $result| tail -n 2 | tr '\n' ';' | sed 's/;/\\n/g' )\"}"
+     echo "{\"environment_name\": \"$environment_name\", \"environment_uuid\": \"$environment_uuid\", \"hostname\": \"$host\", \"stack\": \"$stack\", \"service\": \"$service\", \"container\": \"$container\", \"image\": \"$image\", \"status\": \"OK\", \"result\": \"$(cat /tmp/scan_result | tail -n 2 | tr '\n' ';' | sed 's/;/\\n/g' | tr -d '[:cntrl:]' )\"}"
 
    else
-    echo "{\"environment_name\": \"$environment_name\", \"environment_uuid\": \"$environment_uuid\", \"hostname\": \"$host\", \"stack\": \"$stack\", \"service\": \"$service\", \"container\": \"$container\", \"image\": \"$image\", \"status\": \"ERROR\", \"result\": \"$(echo $result | tr '\n' ';' | sed 's/;/\\n/g'  )\"}"
+    echo "{\"environment_name\": \"$environment_name\", \"environment_uuid\": \"$environment_uuid\", \"hostname\": \"$host\", \"stack\": \"$stack\", \"service\": \"$service\", \"container\": \"$container\", \"image\": \"$image\", \"status\": \"ERROR\", \"result\": \"$(cat /tmp/scan_result | tr '\n' ';' | sed 's/;/\\n/g' |  tr -d '[:cntrl:]' )\"}"
 
    fi
    # reset image for next loop
