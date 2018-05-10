@@ -27,12 +27,12 @@ else
    fi
 
    service=$(curl -s  http://rancher-metadata/latest/containers/$container/labels/io.rancher.stack_service.name)
-   TMPDIR=`pwd` clair-scanner --ip=`hostname` --clair=$CLAIR_URL -t=$LEVEL --all=false  $image 1>/tmp/scan_result  2>&1
+   result=$(TMPDIR=`pwd` clair-scanner --ip=`hostname` --clair=$CLAIR_URL -t=$LEVEL --all=false  $image 2>&1)
    if [ $? -eq 0 ]; then
-     echo "{\"environment_name\": \"$environment_name\", \"environment_uuid\": \"$environment_uuid\", \"hostname\": \"$host\", \"stack\": \"$stack\", \"service\": \"$service\", \"container\": \"$container\", \"image\": \"$image\", \"status\": \"OK\", \"result\": \"$(tail -n 2 /tmp/scan_result | tr '\n' ';' | sed 's/;/\\n/g' )\"}"
+     echo "{\"environment_name\": \"$environment_name\", \"environment_uuid\": \"$environment_uuid\", \"hostname\": \"$host\", \"stack\": \"$stack\", \"service\": \"$service\", \"container\": \"$container\", \"image\": \"$image\", \"status\": \"OK\", \"result\": \"$(echo $result| tail -n 2 | tr '\n' ';' | sed 's/;/\\n/g' )\"}"
 
    else
-    echo "{\"environment_name\": \"$environment_name\", \"environment_uuid\": \"$environment_uuid\", \"hostname\": \"$host\", \"stack\": \"$stack\", \"service\": \"$service\", \"container\": \"$container\", \"image\": \"$image\", \"status\": \"ERROR\", \"result\": \"$(cat /tmp/scan_result | tr '\n' ';' | sed 's/;/\\n/g'  )\"}"
+    echo "{\"environment_name\": \"$environment_name\", \"environment_uuid\": \"$environment_uuid\", \"hostname\": \"$host\", \"stack\": \"$stack\", \"service\": \"$service\", \"container\": \"$container\", \"image\": \"$image\", \"status\": \"ERROR\", \"result\": \"$(echo $result | tr '\n' ';' | sed 's/;/\\n/g'  )\"}"
 
    fi
    # reset image for next loop
