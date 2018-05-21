@@ -39,10 +39,12 @@ else
    service=$(curl -s  http://rancher-metadata/latest/containers/$container/labels/io.rancher.stack_service.name)
    TMPDIR=`pwd` clair-scanner --ip=`hostname` --clair=$CLAIR_URL -t=$LEVEL --all=false  $image >/tmp/scan_result 2>&1
    
+   clair_status=$?
+   
    # in case there are any double quotes
    sed -i 's/"/\\"/g' /tmp/scan_result
    
-   if [ $? -eq 0 ]; then
+   if [ $clair_status -eq 0 ]; then
      echo "{\"environment_name\": \"$environment_name\", \"environment_uuid\": \"$environment_uuid\", \"hostname\": \"$host\", \"stack\": \"$stack\", \"service\": \"$service\", \"container\": \"$container\", \"image\": \"$image\", \"clair-scan-status\": \"OK\", \"result\": \"$(cat /tmp/scan_result | tail -n 2 | tr '\n' ';' | sed 's/;/\\n/g' | tr -d '[:cntrl:]' )\"}"
 
    else
