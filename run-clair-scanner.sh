@@ -17,13 +17,20 @@ if [[ "$image" == "0" ]]; then
    continue
 else
    name=$cont
-   #echo "Am citit $image $name"
+   
+   # skip busybox images
+   if [[ "$image" == "busybox" ]]; then
+      # reset image for next loop
+      image="0"
+      continue
+   fi
+   
    if [ $(echo "$name" | grep -c "^r-") -eq 0 ]; then
       container=$name;
    else
        container=$(echo $name | awk -F "-" '{ final=$2; for (i=3;i<NF;i++) { final=final"-"$i};  print final} ')
    fi
-   #echo $container
+   
    stack=$(curl -s http://rancher-metadata/latest/containers/$container/stack_name)
    if [ -z "$environment_name" ]; then
       environment_name=$(curl -s http://rancher-metadata/latest/stacks/$stack/environment_name)
