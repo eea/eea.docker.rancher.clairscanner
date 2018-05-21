@@ -47,6 +47,8 @@ else
    fi
    # reset image for next loop
    image="0"
+   # clean up
+   rm -rf clair-scanner-*
 fi
 done
 
