@@ -17,7 +17,7 @@ The json format is:
    "service":""
    "container":"",
    "image":"",
-   "clair-scan-status":"OK"/"ERROR",
+   "clair-scan-status":"OK"/"ERROR"/"WARNING",
    "result":""
 }
 ```
@@ -25,3 +25,14 @@ The json format is:
 First three fields are the same per rancher host and can be used to identify it.
 
 After scanning all local images, the container stops.
+
+### Environment variables
+
+* CLAIR_URL - the url of the Clair server, defaults to http://clair:6060
+* LEVEL - the minimal level of CVEs that send an error, default "Critical"
+
+### clair-scan-status 
+
+* "OK" - when the scan was done, no unapproved CVEs found
+* "ERROR" - when the scan was done, unapproved CVEs were found 
+* "WARNING" - there is a problem with the scanning of the image ( the scan was not done )
