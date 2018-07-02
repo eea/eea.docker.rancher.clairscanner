@@ -49,7 +49,7 @@ else
 
    else
     if [ $(grep -ci Unapproved /tmp/scan_result) -gt 0 ]; then
-      echo "{\"environment_name\": \"$environment_name\", \"environment_uuid\": \"$environment_uuid\", \"hostname\": \"$host\", \"stack\": \"$stack\", \"service\": \"$service\", \"container\": \"$container\", \"image\": \"$image\", \"clair-scan-status\": \"ERROR\", \"result\": \"$(cat /tmp/scan_result | grep -i unapproved | tr '\n' ';' | sed 's/;/\\n/g' |  tr -d '[:cntrl:]' )\"}"
+      echo "{\"environment_name\": \"$environment_name\", \"environment_uuid\": \"$environment_uuid\", \"hostname\": \"$host\", \"stack\": \"$stack\", \"service\": \"$service\", \"container\": \"$container\", \"image\": \"$image\", \"clair-scan-status\": \"ERROR\", \"result\": \"$(cat /tmp/scan_result | grep -i unapproved | sort | uniq | tr '\n' ';' | sed 's/;/\\n/g' |  tr -d '[:cntrl:]' )\"}"
     else
       echo "{\"environment_name\": \"$environment_name\", \"environment_uuid\": \"$environment_uuid\", \"hostname\": \"$host\", \"stack\": \"$stack\", \"service\": \"$service\", \"container\": \"$container\", \"image\": \"$image\", \"clair-scan-status\": \"WARNING\", \"result\": \"$(cat /tmp/scan_result | tr '\n' ';' | sed 's/;/\\n/g' |  tr -d '[:cntrl:]' )\"}"
     fi    
