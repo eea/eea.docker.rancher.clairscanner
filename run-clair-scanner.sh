@@ -26,7 +26,7 @@ log_tcp_graylog(){
   while [ $retry -lt $GRAYLOG_RETRY ];
   do
     let retry=$retry+1
-    echo $1 | nc -w 5 $GRAYLOG_HOST $GRAYLOG_PORT
+    echo "$1" | nc -w 5 $GRAYLOG_HOST $GRAYLOG_PORT
     graylog_nc_result=$?
     if [ $graylog_nc_result -eq 0 ]; then
       retry=$GRAYLOG_RETRY
@@ -35,10 +35,10 @@ log_tcp_graylog(){
       sleep $GRAYLOG_WAIT
     fi
   done
-
+  
   if [ $graylog_nc_result -ne 0 ]; then
       # did not manage to send to graylog
-      echo $1
+      echo "$1"
   fi   
 
 }
@@ -46,7 +46,7 @@ log_tcp_graylog(){
 
 log_syslog(){
   
-  log_tcp_graylog "$(date) $(hostname) $1"
+  log_tcp_graylog " $1"
 
 }
 
@@ -62,14 +62,15 @@ log_scan_result(){
 
    #prepare json
    create_json
+ 
 
-   if [[ "$LOGGING" == "DOCKERLOGS" ]]; then
-        log_stdout $clair_json 
+   if [[ "$LOGGING" == "GELF" ]]; then
+      log_gelf "$clair_json"
    else
-     if [[ "$LOGGING" == "GELF" ]]; then
-        log_gelf $clair_json
-     else 
-        log_syslog $clair_json
+     if [[ "$LOGGING" == "TCPSYSLOG" ]]; then
+        log_syslog "$clair_json"
+     else
+        echo "$clair_json"
      fi
    fi
 }
@@ -80,10 +81,10 @@ create_json(){
 
   #for GELF we need an extra field, message
   if [[ "$LOGGING" == "GELF" ]]; then
-      clair_json="{\"message\": \"Clair scan status for $image - $clair-scan-status\""
+      clair_json="{\"message\": \"Clair scan status for $image - $clair_scan_status\","
   fi
 
-  clair_json="$clair_json, \"environment_name\": \"$environment_name\", \"environment_uuid\": \"$environment_uuid\", \"hostname\": \"$host\", \"stack\": \"$stack\", \"service\": \"$service\", \"container\": \"$container\", \"image\": \"$image\", \"clair-scan-status\": \"$clair_json\", \"result\": \"$clair_result\"}"
+  clair_json="$clair_json \"environment_name\": \"$environment_name\", \"environment_uuid\": \"$environment_uuid\", \"hostname\": \"$host\", \"stack\": \"$stack\", \"service\": \"$service\", \"container\": \"$container\", \"image\": \"$image\", \"clair_scan_status\": \"$clair_json\", \"result\": \"$clair_result\"}"
  
 }
 
@@ -132,7 +133,7 @@ else
    
    retry_times=1
   
-   while [ $retry_times -lt $DEFAULT_RETRY_NR ]
+   while [ $retry_times -lt $RETRY_NR ]
    do
 
    TMPDIR=`pwd` clair-scanner --ip=`hostname` --clair=$CLAIR_URL -t=$LEVEL --all=false  $image >/tmp/scan_result 2>&1
@@ -144,9 +145,9 @@ else
         echo "Will retry the scanning of $image, retry nr $retry_times"
         let retry_times=$retry_times+1
 
-        sleep $DEFAULT_RETRY_INTERVAL
+        sleep $RETRY_INTERVAL
    else
-          retry_times=$DEFAULT_RETRY_NR
+          retry_times=$RETRY_NR
 
    fi
    done
