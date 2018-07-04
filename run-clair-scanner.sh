@@ -84,7 +84,7 @@ create_json(){
       clair_json="{\"message\": \"Clair scan status for $image - $clair_scan_status\","
   fi
 
-  clair_json="$clair_json \"environment_name\": \"$environment_name\", \"environment_uuid\": \"$environment_uuid\", \"hostname\": \"$host\", \"stack\": \"$stack\", \"service\": \"$service\", \"container\": \"$container\", \"image\": \"$image\", \"clair_scan_status\": \"$clair_json\", \"result\": \"$clair_result\"}"
+  clair_json="$clair_json \"environment_name\": \"$environment_name\", \"environment_uuid\": \"$environment_uuid\", \"hostname\": \"$host\", \"stack\": \"$stack\", \"service\": \"$service\", \"container\": \"$container\", \"image\": \"$image\", \"clair_scan_status\": \"$clair_scan_status\", \"result\": \"$clair_result\"}"
  
 }
 
