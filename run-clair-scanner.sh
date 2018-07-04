@@ -65,7 +65,6 @@ log_scan_result(){
 
    if [[ "$LOGGING" == "DOCKERLOGS" ]]; then
         log_stdout $clair_json 
-   fi
    else
      if [[ "$LOGGING" == "GELF" ]]; then
         log_gelf $clair_json
