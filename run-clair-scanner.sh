@@ -39,6 +39,8 @@ log_tcp_graylog(){
   if [ $graylog_nc_result -ne 0 ]; then
       # did not manage to send to graylog
       echo "$1"
+  else
+      echo "Succesfully sent to graylog for $image, status - $clair_scan_status, result - $clair_result" 
   fi   
 
 }
