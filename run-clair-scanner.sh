@@ -133,7 +133,7 @@ else
 
    service=$(curl -s  http://rancher-metadata/latest/containers/$container/labels/io.rancher.stack_service.name)
    
-   retry_times=1
+   retry_times=0
   
    while [ $retry_times -lt $RETRY_NR ]
    do
@@ -149,7 +149,7 @@ else
 
         sleep $RETRY_INTERVAL
    else
-          retry_times=$RETRY_NR
+        retry_times=$RETRY_NR
 
    fi
    done
