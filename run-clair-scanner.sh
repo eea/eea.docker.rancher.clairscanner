@@ -4,7 +4,7 @@
 CLAIR_URL=${CLAIR_URL:-"http://clair:6060"}
 LEVEL=${LEVEL:-"Critical"}
 LOGGING=${LOGGING:-"DOCKERLOGS"}
-RETRY_RESULT="no route to host|i/o timeout|failed to respond within the configured timeout"
+RETRY_RESULT="could not find layer|no route to host|i/o timeout|failed to respond within the configured timeout"
 RETRY_INTERVAL=${RETRY_INTERVAL:-20}
 RETRY_NR=${RETRY_NR:-3}
 
