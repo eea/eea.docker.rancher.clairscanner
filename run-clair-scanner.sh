@@ -142,7 +142,7 @@ else
    
    clair_status=$?
    
-   if [ $clair_status -ne 0 ] && [ $(grep -ci Unapproved /tmp/scan_result) -eq 0 ] && [ $(grep -c -E "$RETRY_RESULT") -gt 0 ]; then
+   if [ $clair_status -ne 0 ] && [ $(grep -ci Unapproved /tmp/scan_result) -eq 0 ] && [ $(grep -E "$RETRY_RESULT" /tmp/scan_result | wc -l ) -gt 0 ]; then
        
         echo "Will retry the scanning of $image, retry nr $retry_times"
         let retry_times=$retry_times+1
