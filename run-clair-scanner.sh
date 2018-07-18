@@ -110,7 +110,9 @@ else
    name=$cont
   
    if [ $( echo $image | grep -c ":" ) -ne 1 ]; then
-     image="$image:latest"
+     if [ $( docker images $image | grep latest | wc -l ) -eq 1 ]; then 
+           image="$image:latest"
+     fi
    fi
 
    # skip busybox images
