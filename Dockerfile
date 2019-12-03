@@ -1,6 +1,6 @@
 FROM docker:17.09.1-ce-dind
 
-ENV CLAIR_SCANNER_VERSION=v8
+ENV CLAIR_SCANNER_VERSION=v12
 
 RUN apk add --no-cache bash curl coreutils \
  &&  curl -L -o /usr/bin/clair-scanner https://github.com/arminc/clair-scanner/releases/download/$CLAIR_SCANNER_VERSION/clair-scanner_linux_amd64 \
